@@ -17,6 +17,9 @@ function renderClueList(state, clueHolder, messageEl) {
   const clues = getClues(state);
   clues.forEach((clue) => {
     const row = createElement('div', 'clue-item');
+    if (clue.value) {
+      row.classList.add('revealed');
+    }
     const title = createElement('strong', null, `${clue.label}: `);
     row.appendChild(title);
     if (clue.value) {
