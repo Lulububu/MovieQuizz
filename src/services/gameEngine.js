@@ -118,12 +118,13 @@ export function startRound(state, movie, mode = 'cumulative') {
 export function checkGuess(state, guessMovieId) {
   if (!state.round || state.round.done) return { correct: false, reason: 'Aucune partie en cours' };
   const correct = Number(guessMovieId) === Number(state.round.movie.id);
-  state.round.done = true;
   state.stats.rounds += 1;
   if (correct) {
     state.stats.wins += 1;
+    state.round.done = true;
   } else {
     state.stats.losses += 1;
+    // En cas d'erreur, on maintient la partie en cours pour continuer à acheter des indices.
   }
   saveState(state);
   return { correct };

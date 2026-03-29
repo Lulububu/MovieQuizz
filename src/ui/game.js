@@ -133,6 +133,9 @@ export async function initGameUI() {
   control.appendChild(resetBtn);
   gamePanel.appendChild(control);
 
+  const message = createElement('div', 'message');
+  gamePanel.appendChild(message);
+
   const cluesBlock = createElement('div', 'clues-block');
   gamePanel.appendChild(cluesBlock);
 
@@ -150,9 +153,6 @@ export async function initGameUI() {
   guessContainer.appendChild(guessSubmit);
   guessContainer.appendChild(suggestionBox);
   gamePanel.appendChild(guessContainer);
-
-  const message = createElement('div', 'message');
-  gamePanel.appendChild(message);
 
   const extraActions = createElement('div', 'extra-actions');
   gamePanel.appendChild(extraActions);
@@ -245,7 +245,9 @@ export async function initGameUI() {
       }
     }
     if (currentState.round.movie?.images?.backdrops) {
-      while (currentState.round.clues.filter((c) => c === 'image').length < currentState.round.movie.images.backdrops.length) {
+      const available = currentState.round.movie.images.backdrops.length;
+      const targetImageCount = Math.min(5, available);
+      while (currentState.round.clues.filter((c) => c === 'image').length < targetImageCount) {
         currentState.round.clues.push('image');
       }
     }
@@ -290,6 +292,8 @@ export async function initGameUI() {
     message.classList.remove('success', 'error', 'answer-reveal');
     message.textContent = 'Chargement du film...';
     try {
+      selectedMovieId = null;
+      guessInput.value = '';
       const movie = await getRandomMovie(settings);
       startRound(state, movie, settings.mode);
       renderClueList(state, cluesHolder, message);
@@ -297,6 +301,7 @@ export async function initGameUI() {
       setGameMode(true);
       clueActions.style.display = 'flex';
       guessContainer.style.display = 'block';
+      extraActions.style.display = 'block';
       setAllInteraction(true);
       clearExtraActions();
       updateClueButtons();
@@ -323,6 +328,7 @@ export async function initGameUI() {
     setGameMode(false);
     clueActions.style.display = 'flex';
     guessContainer.style.display = 'block';
+    extraActions.style.display = 'none';
     setAllInteraction(true);
     clearExtraActions();
     message.classList.remove('success', 'error', 'answer-reveal');
